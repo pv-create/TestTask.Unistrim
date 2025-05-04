@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  transactionapi:
+    image: transactionapi
+    build:
+      context: .
+      dockerfile: TestTask.Unistrim.Api/Dockerfile
+      args:
+        - configuration=Debug
+    ports:
+      - 5044:80
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Database=MyDatabase;Username=postgres;Password=postgres
+      - ASPNETCORE_URLS=http://+:80
+    networks:
+      - network
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=MyDatabase
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - network
+  
+  
+  migration-runner:
+    build:
+      context: .
+      dockerfile: TestTask.Unistrim.MigrationRunner/Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: Host=db;Database=MyDatabase;Username=postgres;Password=postgres
+    command: >
+      /bin/bash -c "
+        sleep 10 &&
+        dotnet TestTask.Unistrim.MigrationRunner.dll"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - network
+
+volumes:
+  postgres_data:
+
+networks:
+  network:
+    driver: bridge
