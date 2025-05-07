@@ -19,6 +19,11 @@ public class TransactionController : ControllerBase
         _logger = logger;
     }
     
+    /// <summary>
+    /// Метод создания новой транзакции
+    /// </summary>
+    /// <param name="transaction"></param>
+    /// <returns></returns>
     [HttpPost]
     [Route("Transaction")]
     public async Task<ActionResult<Transaction>> CreateTransaction(Transaction transaction)
@@ -38,6 +43,11 @@ public class TransactionController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Метод получения транзакции по id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     [Route("Transaction")]
     public async Task<ActionResult<Transaction>> GetTransaction([FromQuery] Guid id)

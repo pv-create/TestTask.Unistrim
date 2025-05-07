@@ -80,4 +80,9 @@ public class TransactionRepository: ITransactionRepository
             throw new Exception($"Произошла ошибка при добавлении новой транзакции {ex.Message}");
         }
     }
+
+    public async Task<List<TransactionModel>> GetTransactions()
+    {
+        return await _context.TransactionModels.ToListAsync();
+    }
 }
