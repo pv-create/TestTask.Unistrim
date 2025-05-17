@@ -13,10 +13,13 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      jaeger:
+        condition: service_started
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Database=MyDatabase;Username=postgres;Password=postgres
       - ASPNETCORE_URLS=http://+:80
+      - Etcd__Endpoint=http://etcd:2379  # Добавляем endpoint для etcd
     networks:
       - network
 
@@ -38,23 +41,37 @@ services:
     networks:
       - network
   
-  
-  migration-runner:
-    build:
-      context: .
-      dockerfile: TestTask.Unistrim.MigrationRunner/Dockerfile
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"  # UI
+      - "4317:4317"    # OTLP gRPC
+      - "4318:4318"    # OTLP HTTP
+      - "14250:14250"  # Model
+      - "14268:14268"  # Jaeger HTTP
+      - "6831:6831/udp"  # Jaeger thrift
     environment:
-      ConnectionStrings__DefaultConnection: Host=db;Database=MyDatabase;Username=postgres;Password=postgres
-    command: >
-      /bin/bash -c "
-        sleep 10 &&
-        dotnet TestTask.Unistrim.MigrationRunner.dll"
-    depends_on:
-      db:
-        condition: service_healthy
+      - COLLECTOR_OTLP_ENABLED=true
     networks:
       - network
-
+  
+#  migration-runner:
+#    build:
+#      context: .
+#      dockerfile: TestTask.Unistrim.MigrationRunner/Dockerfile
+#    environment:
+#      ConnectionStrings__DefaultConnection: Host=db;Database=MyDatabase;Username=postgres;Password=postgres
+#    command: >
+#      /bin/bash -c "
+#        sleep 10 &&
+#        dotnet TestTask.Unistrim.MigrationRunner.dll"
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#    networks:
+#      - network
+      
+  
 volumes:
   postgres_data:
 

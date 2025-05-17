@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using TestTask.Unistrim.Api.Dto;
 using TestTask.Unistrim.Api.Interfaces;
+using TestTask.Unistrim.Api.Options;
 
 namespace TestTask.Unistrim.Api.Controllers;
 
@@ -10,15 +12,33 @@ public class TransactionController : ControllerBase
 {
     private readonly ILogger<TransactionController> _logger;
     private readonly ITransactionService _transactionService;
+    private readonly TransactionSettings _transactionSettings;
 
     public TransactionController(
         ITransactionService transactionService,
-        ILogger<TransactionController> logger)
+        ILogger<TransactionController> logger,
+        IOptions<TransactionSettings> options)
     {
         _transactionService = transactionService;
         _logger = logger;
+        _transactionSettings = options.Value;
     }
-    
+
+    [HttpGet]
+    [Route("GetTransactionOptions")]
+    public async Task<ActionResult> GetTransactionOptions()
+    {
+        return Ok("test");
+    }
+
+    [HttpGet]
+    [Route("GetTransactions")]
+    public async Task<ActionResult<IReadOnlyCollection<Transaction>>> GetTransactions()
+    {
+        var result = await _transactionService.GetTransactions();
+
+        return Ok(result);
+    }
     /// <summary>
     /// Метод создания новой транзакции
     /// </summary>
