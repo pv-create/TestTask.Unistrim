@@ -8,6 +8,8 @@ var host = Host.CreateDefaultBuilder(args)
     {
         var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 
+        connectionString = "Host=84.252.143.70;Port=5432;Database=myapp;Username=myuser;Password=mypassword";
+
         if (string.IsNullOrEmpty(connectionString))
         {
             throw new InvalidOperationException("Строка подключения не найдена в переменных окружения.");

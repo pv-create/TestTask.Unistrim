@@ -11,5 +11,5 @@ public interface ITransactionRepository
     Task<Transaction> GetByIdAsync(Guid id);
     Task<TransactionModel> CreateAsync(Transaction transaction);
 
-    Task<List<TransactionModel>> GetTransactions();
+    Task<IReadOnlyCollection<Transaction>> GetTransactions();
 }

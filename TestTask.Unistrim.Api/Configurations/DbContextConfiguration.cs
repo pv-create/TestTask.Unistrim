@@ -66,6 +66,7 @@ public static class DbContextConfiguration
                 errorCodesToAdd: null);
 
             npgsqlOptions.CommandTimeout(20);
+            npgsqlOptions.EnableRetryOnFailure(0);
         });
 
         if (builder.Environment.IsDevelopment())

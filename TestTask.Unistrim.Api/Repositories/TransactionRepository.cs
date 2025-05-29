@@ -62,7 +62,6 @@ public class TransactionRepository: ITransactionRepository
             // Добавляем новую транзакцию
             TransactionModel newTransactionModel = new()
             {
-                Id = newTransaction.Id,
                 TransactionDate = newTransaction.TransactionDate,
                 Amount = newTransaction.Amount
             };
@@ -81,8 +80,17 @@ public class TransactionRepository: ITransactionRepository
         }
     }
 
-    public async Task<List<TransactionModel>> GetTransactions()
+    public async Task<IReadOnlyCollection<Transaction>> GetTransactions()
     {
-        return await _context.TransactionModels.ToListAsync();
+        return await  _context.TransactionModels
+            .Select(x =>
+            new Transaction()
+            {
+                TransactionDate = x.TransactionDate,
+                Amount = x.Amount,
+                Id = x.Id
+                    
+            })
+            .ToListAsync();
     }
 }

@@ -7,4 +7,5 @@ public interface ITransactionService
     Task<Transaction> CreateTransaction(Transaction transaction);
 
     Task<Transaction> GetTransactionById(Guid id);
+    Task<IReadOnlyCollection<Transaction>> GetTransactions();
 }
