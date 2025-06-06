@@ -14,3 +14,8 @@
   <li>Polly</li>
   <li>Fluent Validation</li>
 </ul>
+
+<h2>Сервисы</h2>
+<ul>
+  <li>Jager -- для трейсинга, доступен по <a href = "http://84.252.143.70:16686/search">ссылке</a> </li>
+</ul>
